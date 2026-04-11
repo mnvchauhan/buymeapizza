@@ -1,67 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
-    <title>Creator Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Dashboard Setup</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>body { background-color: #050505; color: #f4f4f5; }</style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], },
+                    colors: {
+                        brand: { 50: '#fffbeb', 100: '#fef3c7', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 900: '#78350f', }
+                    },
+                    animation: { 'blob': 'blob 7s infinite', },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { transition: background-color 0.3s ease, color 0.3s ease; }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .dark .glass-nav {
+            background: rgba(15, 23, 42, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6 font-sans relative selection:bg-orange-500/30">
-    <div class="fixed top-[-10%] right-[-10%] w-[30vw] h-[30vw] bg-orange-600/10 rounded-full blur-[120px]"></div>
-
-    <div class="relative z-10 bg-zinc-900/50 backdrop-blur-3xl border border-white/10 p-10 rounded-3xl shadow-2xl max-w-4xl w-full">
-        <h2 class="text-3xl font-bold mb-8 text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-500">Initialize Profile</h2>
-        
-        <form method="POST" action="/" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Username</label>
-                    <input type="text" name="username" placeholder="mnvchauhan" class="w-full bg-[#111] border border-white/5 rounded-xl p-3 text-white focus:border-orange-500 outline-none" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Display Name</label>
-                    <input type="text" name="name" placeholder="Manav Chauhan" class="w-full bg-[#111] border border-white/5 rounded-xl p-3 text-white focus:border-orange-500 outline-none" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">UPI ID</label>
-                    <input type="text" name="upi_id" placeholder="mnv@okaxis" class="w-full bg-[#111] border border-white/5 rounded-xl p-3 text-white focus:border-orange-500 outline-none" required>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Profile Picture</label>
-                    <input type="file" name="profile_pic" accept="image/*" class="w-full bg-[#111] border border-white/5 rounded-xl p-2.5 text-sm text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 transition-all cursor-pointer outline-none">
-                </div>
-            </div>
-
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-xs font-semibold text-zinc-400 uppercase tracking-wider mb-2">Bio</label>
-                    <textarea name="bio" rows="2" placeholder="I build robust backends..." class="w-full bg-[#111] border border-white/5 rounded-xl p-3 text-white focus:border-orange-500 outline-none resize-none" required></textarea>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4 pt-2">
-                    <div>
-                        <label class="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Website</label>
-                        <input type="url" name="website" placeholder="https://..." class="w-full bg-[#111] border border-white/5 rounded-lg p-2.5 text-sm text-white focus:border-emerald-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">GitHub</label>
-                        <input type="url" name="github" placeholder="URL" class="w-full bg-[#111] border border-white/5 rounded-lg p-2.5 text-sm text-white focus:border-white outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">LinkedIn</label>
-                        <input type="url" name="linkedin" placeholder="URL" class="w-full bg-[#111] border border-white/5 rounded-lg p-2.5 text-sm text-white focus:border-blue-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-1.5">Instagram</label>
-                        <input type="url" name="instagram" placeholder="URL" class="w-full bg-[#111] border border-white/5 rounded-lg p-2.5 text-sm text-white focus:border-pink-500 outline-none">
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-span-1 md:col-span-2 mt-2">
-                <button type="submit" class="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-zinc-200 transition-all shadow-lg hover:shadow-white/20 hover:-translate-y-0.5">Deploy Profile 🚀</button>
-            </div>
-        </form>
+<body class="bg-slate-50 text-slate-900 dark:bg-[#0B1121] dark:text-slate-50 min-h-screen overflow-x-hidden">
+    <!-- BLOBS -->
+    <div class="fixed inset-0 w-full h-full pointer-events-none z-[-1] overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-brand-500/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-orange-600/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000"></div>
     </div>
+
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-orange-600 text-white flex items-center justify-center font-black text-xl shadow-lg">C</div>
+                <span class="text-2xl font-bold tracking-tight">BuyMe<span class="text-brand-500">CholeBhature</span></span>
+            </a>
+            
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+                    <i id="theme-icon" class="fas fa-sun text-slate-700 dark:text-brand-400"></i>
+                </button>
+                <a href="/login" class="hidden md:block font-bold text-slate-900 dark:text-white hover:text-brand-500 transition">Log in</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SETUP FORM -->
+    <main class="flex items-center justify-center p-6 mt-4 relative">
+        <div class="relative z-10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-3xl border border-slate-200 dark:border-white/10 p-10 rounded-3xl shadow-2xl max-w-4xl w-full">
+            <h2 class="text-3xl font-bold mb-8 text-slate-900 dark:text-white flex items-center gap-3">
+                <i class="fas fa-rocket text-brand-500"></i> Initialize Profile
+            </h2>
+            
+            {% if error %}
+            <div class="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-xl mb-6">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/setup" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Username</label>
+                        <input type="text" name="username" placeholder="mnvchauhan" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Password</label>
+                        <input type="password" name="password" placeholder="••••••••" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Display Name</label>
+                        <input type="text" name="name" placeholder="Manav Chauhan" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Email Address</label>
+                        <input type="email" name="email" placeholder="mnv@example.com" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Phone Number</label>
+                        <input type="tel" name="phone" placeholder="+91 9876543210" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">UPI ID</label>
+                        <input type="text" name="upi_id" placeholder="mnv@okaxis" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Profile Picture</label>
+                        <input type="file" name="profile_pic" accept="image/*" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-2.5 text-sm text-slate-600 dark:text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-brand-500 file:text-white hover:file:bg-brand-600 transition-all cursor-pointer outline-none">
+                    </div>
+                </div>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Bio</label>
+                        <textarea name="bio" rows="2" placeholder="I build robust backends..." class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none resize-none" required></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1.5">Website</label>
+                            <input type="url" name="website" placeholder="https://..." class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1.5">GitHub</label>
+                            <input type="url" name="github" placeholder="URL" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1.5">LinkedIn</label>
+                            <input type="url" name="linkedin" placeholder="URL" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-brand-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 dark:text-zinc-500 uppercase tracking-wider mb-1.5">Instagram</label>
+                            <input type="url" name="instagram" placeholder="URL" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-lg p-2.5 text-sm text-slate-900 dark:text-white focus:border-brand-500 outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 mt-2">
+                    <button type="submit" class="w-full bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-400 hover:to-orange-500 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:-translate-y-0.5">Deploy Profile 🚀</button>
+                    <p class="text-center mt-6 text-sm text-slate-500 dark:text-slate-400">Already a creator? <a href="/login" class="text-brand-500 ml-1 font-bold">Log in</a></p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        // Theme Toggle Script
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        if (html.classList.contains('dark')) {
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    </script>
 </body>
 </html>

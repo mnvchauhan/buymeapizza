@@ -1,147 +1,501 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Developer</title>
-    
+    <title>Buy Me Chole Bhature | Premium Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-
-    <style>
-        body { background-color: #050505; color: #f4f4f5; }
-        /* Premium Glassmorphism Effect */
-        .glass-card {
-            background: rgba(24, 24, 27, 0.4);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                            900: '#78350f',
+                        }
+                    },
+                    animation: {
+                        'marquee': 'marquee 35s linear infinite',
+                        'float': 'float 5s ease-in-out infinite',
+                        'blob': 'blob 7s infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-15px)' },
+                        },
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
         }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { transition: background-color 0.3s ease, color 0.3s ease; }
+        
+        /* Modern Glassmorphism styling inspired by macOS */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .dark .glass-nav {
+            background: rgba(15, 23, 42, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .bento-card {
+            background: rgba(255, 255, 255, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .dark .bento-card {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .bento-card:hover { transform: translateY(-5px); }
+
+        /* Scroll Reveal Utility */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6 relative font-sans overflow-hidden">
-    
-    <div class="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-orange-600/20 rounded-full filter blur-[120px] opacity-60 pointer-events-none"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full filter blur-[120px] opacity-60 pointer-events-none"></div>
+<body class="bg-slate-50 text-slate-900 dark:bg-[#0B1121] dark:text-slate-50 min-h-screen overflow-x-hidden">
 
-    <div class="glass-card relative z-10 p-8 rounded-[2rem] max-w-md w-full">
-        
-        <div id="setupView">
-            <div class="flex justify-center mb-6">
-                <div class="h-12 w-12 rounded-2xl bg-zinc-800 border border-white/5 flex items-center justify-center text-orange-500 text-2xl shadow-inner">⚡</div>
-            </div>
-            <h2 class="text-2xl font-bold mb-6 text-center text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-500">Configure Payouts</h2>
-            
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1">Creator Name</label>
-                    <input type="text" id="nameInput" value="Manav Chauhan" class="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-orange-500/50 transition-colors">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-zinc-400 uppercase tracking-wider mb-1">UPI ID</label>
-                    <input type="text" id="upiInput" placeholder="e.g., mnv@okaxis" class="w-full bg-black/50 border border-white/10 rounded-2xl p-4 text-white outline-none focus:border-orange-500/50 transition-colors">
-                </div>
-                <button onclick="saveProfile()" class="w-full bg-white text-black font-semibold py-4 rounded-2xl mt-4 hover:scale-[1.02] transition-transform">Save & Initialize</button>
-            </div>
-        </div>
-
-        <div id="menuView" class="hidden">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400" id="displayName"></h1>
-                <p class="text-zinc-500 text-sm font-medium">Support my next build.</p>
-            </div>
-
-            <div class="space-y-3 mb-6" id="menuOptions"></div>
-
-            <div id="qrContainer" class="hidden flex flex-col items-center mt-4">
-                <div class="bg-white p-4 rounded-2xl mb-3">
-                    <div id="qrcode"></div>
-                </div>
-                <p class="text-sm text-zinc-400 mb-6">Scan to pay <span class="text-white font-bold" id="displayAmount"></span></p>
-            </div>
-
-            <button onclick="resetProfile()" class="w-full text-zinc-500 text-sm hover:text-white transition-colors">← Edit Profile</button>
-        </div>
+    <div class="fixed inset-0 w-full h-full pointer-events-none z-[-1] overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-brand-500/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-orange-600/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000"></div>
     </div>
 
-    <script>
-        const menu = [
-            { id: 1, name: 'Mini Slice', price: 49, icon: '🍕' },
-            { id: 2, name: 'Pro Dev Meal', price: 99, icon: '⚡' },
-            { id: 3, name: 'God Mode Feast', price: 199, icon: '✨' }
-        ];
-
-        let upiId = '';
-        let creatorName = '';
-        let qrCodeObj = null;
-
-        function saveProfile() {
-            upiId = document.getElementById('upiInput').value;
-            creatorName = document.getElementById('nameInput').value;
-
-            if (!upiId.includes('@')) {
-                alert("Please enter a valid UPI ID");
-                return;
-            }
-
-            document.getElementById('displayName').innerText = creatorName;
-            document.getElementById('setupView').classList.add('hidden');
-            document.getElementById('menuView').classList.remove('hidden');
-            renderMenu();
-        }
-
-        function resetProfile() {
-            document.getElementById('menuView').classList.add('hidden');
-            document.getElementById('setupView').classList.remove('hidden');
-            document.getElementById('qrContainer').classList.add('hidden');
-        }
-
-        function renderMenu() {
-            const container = document.getElementById('menuOptions');
-            container.innerHTML = ''; // Clear old buttons
+    <nav class="sticky top-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-orange-600 text-white flex items-center justify-center font-black text-xl shadow-lg">C</div>
+                <span class="text-2xl font-bold tracking-tight">BuyMe<span class="text-brand-500">CholeBhature</span></span>
+            </div>
             
-            menu.forEach(item => {
-                const btn = document.createElement('button');
-                btn.className = 'w-full flex items-center justify-between p-4 rounded-2xl border bg-black/30 border-white/5 hover:border-white/10 transition-all text-left';
-                btn.innerHTML = `<span class="text-base">${item.icon} &nbsp; ${item.name}</span><span class="font-bold text-zinc-300">₹${item.price}</span>`;
-                btn.onclick = () => generateQR(item.price, btn);
-                container.appendChild(btn);
-            });
+            <div class="hidden md:flex gap-8 font-medium text-slate-600 dark:text-slate-300">
+                <a href="#features" class="hover:text-brand-500 transition">Features</a>
+                <a href="#how-it-works" class="hover:text-brand-500 transition">How it Works</a>
+                <a href="#pricing" class="hover:text-brand-500 transition">Pricing</a>
+                <a href="#faq" class="hover:text-brand-500 transition">FAQ</a>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+                    <i id="theme-icon" class="fas fa-sun text-slate-700 dark:text-brand-400"></i>
+                </button>
+                {% if username %}
+                    <a href="/{{ username }}" class="hidden md:block font-bold text-slate-900 dark:text-white hover:text-brand-500 transition">My Profile</a>
+                    <a href="/logout" class="bg-red-500 hover:bg-red-600 px-6 py-2.5 text-white rounded-full font-bold shadow-lg hover:scale-105 transition">Log out</a>
+                {% else %}
+                    <a href="/login" class="hidden md:block font-bold text-slate-900 dark:text-white hover:text-brand-500 transition">Log in</a>
+                    <a href="/setup" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-6 py-2.5 rounded-full font-bold shadow-lg hover:scale-105 transition">Sign Up Free</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-6 pt-20 pb-24 lg:pt-32 lg:pb-32">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            <div class="lg:col-span-7 flex flex-col items-start reveal active">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-100/50 dark:bg-brand-900/30 border border-brand-200 dark:border-brand-800/50 text-brand-600 dark:text-brand-400 text-sm font-bold mb-8">
+                    <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                    Now accepting all UPI Apps
+                </div>
+                
+                <h1 class="text-6xl lg:text-7xl xl:text-8xl font-black leading-[1.05] tracking-tight mb-8">
+                    Fund your work with <br> 
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-400 to-orange-600">Spicy Support.</span>
+                </h1>
+                
+                <p class="text-xl text-slate-600 dark:text-slate-400 max-w-xl mb-10 font-medium leading-relaxed">
+                    The modern, Indian-first monetization platform. Accept UPI payments directly to your bank account with <strong class="text-slate-900 dark:text-white">zero hidden charges</strong>. No middlemen, just pure appreciation.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-10">
+                    <a href="/setup" class="bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-400 hover:to-orange-500 text-white px-8 py-4 rounded-full font-bold text-lg shadow-[0_0_30px_rgba(245,158,11,0.3)] hover:-translate-y-1 transition duration-300 flex items-center justify-center gap-2">
+                        Claim your link <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <div class="flex items-center px-6 py-4 rounded-full border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 font-medium">
+                        buymecholebhature.com/<span class="text-slate-900 dark:text-white font-bold ml-1">mnvchauhan</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6">
+                    <div class="flex -space-x-3">
+                        <img class="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900" src="https://i.pravatar.cc/100?img=1" alt="user">
+                        <img class="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900" src="https://i.pravatar.cc/100?img=2" alt="user">
+                        <img class="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900" src="https://i.pravatar.cc/100?img=3" alt="user">
+                        <div class="w-10 h-10 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold">+10k</div>
+                    </div>
+                    <div class="text-sm font-medium text-slate-500">
+                        Loved by <span class="text-slate-900 dark:text-white font-bold">10,000+</span> creators
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-5 relative flex justify-center w-full reveal active">
+                <div class="relative w-full max-w-[500px] aspect-square rounded-[3rem] bento-card p-8 flex items-center justify-center shadow-2xl overflow-hidden">
+                    <div class="absolute inset-0 bg-grid-pattern opacity-50 z-0"></div>
+                    
+                    <svg viewBox="0 0 400 300" class="w-full h-full drop-shadow-2xl z-10 animate-float" xmlns="http://www.w3.org/2000/svg">
+                        <ellipse cx="200" cy="220" rx="160" ry="60" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="4"/>
+                        <ellipse cx="200" cy="220" rx="130" ry="45" fill="#F8FAFC"/>
+                        
+                        <ellipse cx="140" cy="150" rx="90" ry="70" fill="#FBBF24" stroke="#D97706" stroke-width="3" transform="rotate(-15 140 150)"/>
+                        <circle cx="100" cy="130" r="8" fill="#D97706" opacity="0.4"/>
+                        <circle cx="160" cy="110" r="12" fill="#D97706" opacity="0.3"/>
+                        <circle cx="120" cy="180" r="6" fill="#D97706" opacity="0.5"/>
+        
+                        <path d="M 230 140 Q 230 210 290 210 Q 350 210 350 140 Z" fill="#94A3B8" stroke="#64748B" stroke-width="3"/>
+                        <ellipse cx="290" cy="140" rx="60" ry="15" fill="#E2E8F0" stroke="#64748B" stroke-width="3"/>
+                        
+                        <ellipse cx="290" cy="140" rx="55" ry="12" fill="#78350F"/>
+                        <circle cx="260" cy="140" r="5" fill="#92400E"/>
+                        <circle cx="280" cy="138" r="6" fill="#92400E"/>
+                        <circle cx="300" cy="142" r="5" fill="#92400E"/>
+                        <circle cx="320" cy="139" r="6" fill="#92400E"/>
+                        <circle cx="290" cy="135" r="5" fill="#B45309"/>
+                        
+                        <ellipse cx="120" cy="230" rx="15" ry="5" fill="none" stroke="#F472B6" stroke-width="3"/>
+                        <ellipse cx="130" cy="235" rx="12" ry="4" fill="none" stroke="#F472B6" stroke-width="3"/>
+                        <path d="M 160 230 Q 180 240 170 250" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
+                        
+                        <ellipse cx="180" cy="190" rx="80" ry="50" fill="#FBBF24" stroke="#D97706" stroke-width="3" transform="rotate(10 180 190)"/>
+                        <circle cx="150" cy="180" r="10" fill="#D97706" opacity="0.4"/>
+                        <circle cx="200" cy="200" r="7" fill="#D97706" opacity="0.5"/>
+                        
+                        <path d="M 280 110 Q 290 80 280 50" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M 300 110 Q 310 80 300 60" fill="none" stroke="rgba(255,255,255,0.6)" stroke-width="4" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                
+                <div class="absolute -bottom-6 -left-6 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-4 z-20 animate-[float_4s_ease-in-out_infinite_reverse]">
+                    <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/40 flex items-center justify-center text-green-600 dark:text-green-400 text-xl">
+                        <i class="fas fa-rupee-sign"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-black text-slate-900 dark:text-white">₹150 Received</p>
+                        <p class="text-xs font-medium text-slate-500">via PhonePe</p>
+                    </div>
+                </div>
+                
+                <div class="absolute top-10 -right-8 bg-white dark:bg-slate-800 p-4 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20 animate-[float_6s_ease-in-out_infinite]">
+                    <div class="text-2xl">🎉</div>
+                    <p class="text-sm font-bold text-slate-900 dark:text-white">New Supporter!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section class="border-y border-slate-200 dark:border-slate-800/50 bg-white/50 dark:bg-slate-900/20 py-8 reveal">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <p class="font-bold text-slate-500 dark:text-slate-400">Works seamlessly with your favorite apps:</p>
+            <div class="flex flex-wrap justify-center gap-8 md:gap-12 opacity-70 grayscale hover:grayscale-0 transition-all duration-300">
+                <h3 class="text-2xl font-black italic text-[#1A73E8]">GPay</h3>
+                <h3 class="text-2xl font-black italic text-[#5f259f]">PhonePe</h3>
+                <h3 class="text-2xl font-black italic text-[#002970]">Paytm</h3>
+                <h3 class="text-2xl font-black italic text-[#E55300]">BHIM</h3>
+                <h3 class="text-2xl font-black italic text-[#FF9900]">Amazon Pay</h3>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="max-w-7xl mx-auto px-6 py-24 reveal">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-black mb-4">Everything a creator needs</h2>
+            <p class="text-xl text-slate-500 max-w-2xl mx-auto">Monetize your audience without the hassle of complex setups or writing code.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="bento-card p-10 rounded-3xl lg:col-span-2">
+                <div class="w-14 h-14 bg-brand-100 dark:bg-brand-900/30 rounded-2xl flex items-center justify-center text-brand-500 text-2xl mb-6 shadow-inner">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3 class="text-3xl font-bold mb-3">Instant Payouts</h3>
+                <p class="text-slate-500 text-lg">Skip the virtual wallets. Every contribution goes straight to your bank account instantly via your UPI ID. No waiting for week-end settlements.</p>
+            </div>
+            
+            <div class="bento-card p-10 rounded-3xl">
+                <div class="w-14 h-14 bg-emerald-100 dark:bg-emerald-900/30 rounded-2xl flex items-center justify-center text-emerald-500 text-2xl mb-6 shadow-inner">
+                    <i class="fas fa-percent"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">0% Platform Fee</h3>
+                <p class="text-slate-500">We don't take a cut. You keep 100% of the support your community gives.</p>
+            </div>
+
+            <div class="bento-card p-10 rounded-3xl">
+                <div class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900/30 rounded-2xl flex items-center justify-center text-indigo-500 text-2xl mb-6 shadow-inner">
+                    <i class="fas fa-paint-brush"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Custom Pages</h3>
+                <p class="text-slate-500">Design your page to match your vibe. Add social links, goals, and bio.</p>
+            </div>
+
+            <div class="bento-card p-10 rounded-3xl lg:col-span-4 bg-gradient-to-r from-slate-900 to-slate-800 text-white border-0 overflow-hidden relative">
+                <div class="absolute right-0 top-0 opacity-10">
+                    <i class="fas fa-chart-line text-[200px]"></i>
+                </div>
+                <div class="relative z-10 lg:w-1/2">
+                    <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center text-white text-2xl mb-6 backdrop-blur-sm">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-3">Analytics Dashboard</h3>
+                    <p class="text-slate-300 text-lg mb-6">Track your daily, weekly, and monthly growth. Know exactly who your top supporters are and engage with them directly from the dashboard.</p>
+                    <button class="bg-white text-slate-900 px-6 py-3 rounded-full font-bold hover:bg-slate-200 transition">View Demo</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="how-it-works" class="bg-slate-100 dark:bg-slate-900/50 py-24 border-y border-slate-200 dark:border-slate-800/50 reveal">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl md:text-5xl font-black mb-4">Set up in 2 minutes</h2>
+                <p class="text-xl text-slate-500">Faster than making instant noodles.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 relative shadow-sm">
+                    <div class="absolute -top-5 -left-5 w-12 h-12 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full flex items-center justify-center text-xl font-black shadow-lg">1</div>
+                    <h3 class="text-2xl font-bold mb-3 mt-2">Create Your Page</h3>
+                    <p class="text-slate-500">Sign up and pick your custom username. Add a profile picture and a short bio telling people what you do.</p>
+                </div>
+                
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700 relative shadow-sm">
+                    <div class="absolute -top-5 -left-5 w-12 h-12 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-full flex items-center justify-center text-xl font-black shadow-lg">2</div>
+                    <h3 class="text-2xl font-bold mb-3 mt-2">Add your UPI ID</h3>
+                    <p class="text-slate-500">Connect your existing GPay, PhonePe, or Paytm UPI ID securely. This is where your money will go directly.</p>
+                </div>
+
+                <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 border border-brand-200 dark:border-brand-500/30 relative shadow-sm shadow-brand-500/10">
+                    <div class="absolute -top-5 -left-5 w-12 h-12 bg-brand-500 text-white rounded-full flex items-center justify-center text-xl font-black shadow-lg shadow-brand-500/40">3</div>
+                    <h3 class="text-2xl font-bold mb-3 mt-2">Share & Earn</h3>
+                    <p class="text-slate-500">Put the link in your Instagram bio, YouTube description, or Twitter. Supporters can pay with one click.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="max-w-4xl mx-auto px-6 py-24 reveal">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-black mb-4">Why creators choose us</h2>
+            <p class="text-xl text-slate-500">The math speaks for itself.</p>
+        </div>
+
+        <div class="bento-card rounded-3xl overflow-hidden">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-100 dark:bg-slate-800/50">
+                        <th class="p-6 text-lg font-bold border-b border-slate-200 dark:border-slate-700">Feature</th>
+                        <th class="p-6 text-lg font-bold border-b border-slate-200 dark:border-slate-700 text-brand-500">BuyMeCholeBhature</th>
+                        <th class="p-6 text-lg font-bold border-b border-slate-200 dark:border-slate-700 opacity-50">Others (Patreon/Coffee)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="p-6 border-b border-slate-200 dark:border-slate-700 font-medium">Platform Fee</td>
+                        <td class="p-6 border-b border-slate-200 dark:border-slate-700 font-black text-green-500">0%</td>
+                        <td class="p-6 border-b border-slate-200 dark:border-slate-700 text-slate-500">5% - 8%</td>
+                    </tr>
+                    <tr>
+                        <td class="p-6 border-b border-slate-200 dark:border-slate-700 font-medium">Payout Speed</td>
+                        <td class="p-6 border-b border-slate-200 dark:border-slate-700 font-bold">Instant (UPI)</td>
+                        <td class="p-6 border-b border-slate-200 dark:border-slate-700 text-slate-500">3-7 Business Days</td>
+                    </tr>
+                    <tr>
+                        <td class="p-6 font-medium">Payment Methods</td>
+                        <td class="p-6 font-bold">All Indian UPI Apps</td>
+                        <td class="p-6 text-slate-500">Credit Cards / PayPal</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="py-12 bg-white dark:bg-[#0B1121] overflow-hidden reveal">
+        <div class="max-w-7xl mx-auto px-6 mb-8 text-center">
+            <h2 class="text-3xl font-black">Wall of Love 💚</h2>
+        </div>
+        
+        <div class="relative w-full flex overflow-x-hidden group">
+            <div class="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white dark:from-[#0B1121] to-transparent z-10 pointer-events-none"></div>
+            <div class="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white dark:from-[#0B1121] to-transparent z-10 pointer-events-none"></div>
+
+            <div class="animate-marquee whitespace-nowrap flex gap-6 px-6 items-center">
+                <div id="marquee-content-1" class="flex gap-6"></div>
+                <div id="marquee-content-2" class="flex gap-6"></div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="max-w-3xl mx-auto px-6 py-24 reveal">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-black mb-4">Got Questions?</h2>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bento-card rounded-2xl overflow-hidden cursor-pointer faq-item">
+                <div class="px-6 py-5 flex justify-between items-center font-bold text-lg">
+                    Is it really 100% free?
+                    <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                </div>
+                <div class="px-6 pb-5 text-slate-500 hidden faq-content">
+                    Yes! We charge 0% platform fee. The money your supporters send goes directly to your UPI. Standard bank limits apply, but we don't take a single rupee.
+                </div>
+            </div>
+            
+            <div class="bento-card rounded-2xl overflow-hidden cursor-pointer faq-item">
+                <div class="px-6 py-5 flex justify-between items-center font-bold text-lg">
+                    Do my supporters need an account?
+                    <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                </div>
+                <div class="px-6 pb-5 text-slate-500 hidden faq-content">
+                    No. Your supporters don't need to sign up. They just click your link and pay via their preferred UPI app on their phone.
+                </div>
+            </div>
+
+            <div class="bento-card rounded-2xl overflow-hidden cursor-pointer faq-item">
+                <div class="px-6 py-5 flex justify-between items-center font-bold text-lg">
+                    Can I use this for my open-source projects?
+                    <i class="fas fa-chevron-down text-slate-400 transition-transform duration-300"></i>
+                </div>
+                <div class="px-6 pb-5 text-slate-500 hidden faq-content">
+                    Absolutely! Whether you are a developer, artist, writer, or streamer, if you have an audience in India, this is the perfect tool for you.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slate-900 text-white dark:bg-black pt-24 pb-12 border-t border-slate-800">
+        <div class="max-w-4xl mx-auto px-6 text-center mb-24 reveal">
+            <h2 class="text-5xl md:text-7xl font-black mb-8 leading-tight">Ready to get your first plate?</h2>
+            <a href="/setup" class="inline-block bg-brand-500 hover:bg-brand-400 text-white px-10 py-5 rounded-full font-black text-xl shadow-[0_0_40px_rgba(245,158,11,0.4)] hover:-translate-y-2 transition duration-300">
+                Create Your Free Page Now
+            </a>
+            <p class="mt-6 text-slate-400 font-medium">Takes 2 minutes • No credit card required</p>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6 pt-8 border-t border-slate-800">
+            <div class="flex items-center gap-2 font-bold text-2xl">
+                C<span class="text-brand-500">.</span>
+            </div>
+            <div class="flex gap-8 font-medium text-slate-400">
+                <a href="#" class="hover:text-white transition">About</a>
+                <a href="#" class="hover:text-white transition">Features</a>
+                <a href="#" class="hover:text-white transition">Privacy</a>
+                <a href="#" class="hover:text-white transition">Terms</a>
+            </div>
+            <div class="flex gap-4 text-slate-400 text-xl">
+                <a href="#" class="hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="hover:text-white transition"><i class="fab fa-discord"></i></a>
+            </div>
+        </div>
+        <div class="text-center text-slate-600 mt-12 text-sm font-medium">
+            &copy; 2026 BuyMeCholeBhature. Made with 💛 for Indian Creators.
+        </div>
+    </footer>
+
+    <script>
+        // 1. Theme Toggle
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        if (html.classList.contains('dark')) {
+            themeIcon.classList.replace('fa-sun', 'fa-moon');
         }
 
-        function generateQR(amount, selectedBtn) {
-            // Reset button highlights
-            const buttons = document.getElementById('menuOptions').children;
-            for(let b of buttons) {
-                b.classList.remove('bg-orange-500/10', 'border-orange-500/50');
-                b.classList.add('bg-black/30', 'border-white/5');
-            }
-            // Highlight clicked button
-            selectedBtn.classList.remove('bg-black/30', 'border-white/5');
-            selectedBtn.classList.add('bg-orange-500/10', 'border-orange-500/50');
-
-            // Show QR container
-            document.getElementById('qrContainer').classList.remove('hidden');
-            document.getElementById('displayAmount').innerText = `₹${amount}`;
-
-            // Generate UPI Link
-            const upiLink = `upi://pay?pa=${upiId}&pn=${creatorName}&am=${amount}&cu=INR`;
-
-            // Render QR Code
-            if (qrCodeObj == null) {
-                qrCodeObj = new QRCode(document.getElementById("qrcode"), {
-                    text: upiLink,
-                    width: 160,
-                    height: 160,
-                    colorDark : "#050505",
-                    colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.H
-                });
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
             } else {
-                qrCodeObj.clear();
-                qrCodeObj.makeCode(upiLink);
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+
+        // 2. Scroll Reveal
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
             }
         }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Trigger on load
+
+        // 3. FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const content = item.querySelector('.faq-content');
+                const icon = item.querySelector('i');
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+
+        // 4. Marquee Generator
+        const marquee1 = document.getElementById('marquee-content-1');
+        const marquee2 = document.getElementById('marquee-content-2');
+        const roles = ["Developer", "Designer", "YouTuber", "Artist", "Writer"];
+        
+        let cardsHTML = '';
+        for(let i=1; i<=10; i++) {
+            const randomRole = roles[Math.floor(Math.random() * roles.length)];
+            cardsHTML += `
+                <div class="flex items-center gap-4 bg-white dark:bg-slate-800 px-6 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm min-w-[250px]">
+                    <img src="https://i.pravatar.cc/100?img=${i+30}" class="w-12 h-12 rounded-full object-cover">
+                    <div class="text-left">
+                        <p class="text-sm font-bold text-slate-900 dark:text-white leading-tight">Creator ${i}</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">${randomRole}</p>
+                    </div>
+                </div>
+            `;
+        }
+        marquee1.innerHTML = cardsHTML;
+        marquee2.innerHTML = cardsHTML;
     </script>
 </body>
 </html>

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | BuyMeCholeBhature</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], },
+                    colors: {
+                        brand: { 50: '#fffbeb', 100: '#fef3c7', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 900: '#78350f', }
+                    },
+                    animation: { 'blob': 'blob 7s infinite', },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .dark .glass-nav {
+            background: rgba(15, 23, 42, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 dark:bg-[#0B1121] dark:text-slate-50 min-h-screen overflow-x-hidden">
+    <!-- BLOBS -->
+    <div class="fixed inset-0 w-full h-full pointer-events-none z-[-1] overflow-hidden">
+        <div
+            class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-brand-500/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob">
+        </div>
+        <div
+            class="absolute top-[20%] right-[-10%] w-96 h-96 bg-orange-600/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-2000">
+        </div>
+        <div
+            class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-blob animation-delay-4000">
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-50 glass-nav transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-400 to-orange-600 text-white flex items-center justify-center font-black text-xl shadow-lg">
+                    C</div>
+                <span class="text-2xl font-bold tracking-tight">BuyMe<span
+                        class="text-brand-500">CholeBhature</span></span>
+            </a>
+
+            <div class="flex items-center gap-4">
+                <button id="theme-toggle"
+                    class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+                    <i id="theme-icon" class="fas fa-sun text-slate-700 dark:text-brand-400"></i>
+                </button>
+                <a href="/setup" class="hidden md:block font-bold text-brand-500 hover:text-brand-600 transition">Sign
+                    Up Free</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LOGIN FORM -->
+    <main class="flex items-center justify-center p-6 mt-10 relative">
+        <div
+            class="relative z-10 bg-white/50 dark:bg-slate-900/50 backdrop-blur-3xl border border-slate-200 dark:border-white/10 p-10 rounded-[2rem] shadow-2xl max-w-[440px] w-full">
+
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Welcome Back</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">Sign in to manage your creator dashboard</p>
+            </div>
+
+            <div id="alert-box"
+                class="hidden bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-xl mb-6 text-sm font-bold">
+            </div>
+            {% if error %}
+            <div class="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-xl mb-6 text-sm font-bold">
+                {{ error }}
+            </div>
+            {% endif %}
+
+            <!-- Google Login Section -->
+            <button onclick="handleGoogleLogin()"
+                class="w-full relative flex items-center justify-center gap-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold py-3.5 rounded-xl transition-all shadow-sm mb-6 group">
+                <svg class="w-5 h-5 group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
+                    <path fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                </svg>
+                Continue with Google
+            </button>
+
+            <div class="flex items-center gap-4 mb-6">
+                <div class="h-[1px] flex-1 bg-slate-200 dark:bg-slate-700"></div>
+                <span class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">OR</span>
+                <div class="h-[1px] flex-1 bg-slate-200 dark:bg-slate-700"></div>
+            </div>
+
+            <!-- Login Method Tabs -->
+            <div class="flex p-1 bg-slate-100 dark:bg-slate-800 rounded-xl mb-6">
+                <button type="button" onclick="switchTab('otp')" id="tab-otp"
+                    class="flex-1 py-2 text-sm font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-900 shadow-sm rounded-lg transition-all">OTP
+                    Login</button>
+                <button type="button" onclick="switchTab('pwd')" id="tab-pwd"
+                    class="flex-1 py-2 text-sm font-bold text-slate-500 dark:text-slate-400 rounded-lg hover:text-slate-800 dark:hover:text-slate-200 transition-all">Password</button>
+            </div>
+
+            <!-- OTP Request Section -->
+            <div id="otp-request-section" class="space-y-4">
+                <div>
+                    <input type="text" id="otp-contact" placeholder="Email or Phone Number"
+                        class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3.5 text-slate-900 dark:text-white focus:border-brand-500 outline-none transition-colors">
+                </div>
+                <button type="button" onclick="sendOtp()" id="send-otp-btn"
+                    class="w-full bg-slate-900 dark:bg-white text-white dark:text-black hover:bg-slate-800 dark:hover:bg-slate-200 font-bold py-4 rounded-xl transition-all shadow-md mt-2 flex justify-center items-center gap-2">
+                    Send Login Code <i class="fas fa-paper-plane text-xs"></i>
+                </button>
+            </div>
+
+            <!-- OTP Verify Section (Hidden Initially) -->
+            <div id="otp-verify-section" class="hidden space-y-4">
+                <p class="text-sm font-semibold text-slate-600 dark:text-slate-300 text-center mb-4">Enter the 4-digit
+                    code sent to you <br>(Check Terminal for Mock OTP)</p>
+                <div class="flex justify-between gap-3 mb-6">
+                    <input type="text" maxlength="1"
+                        class="otp-input w-full h-14 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl text-center text-2xl font-black text-brand-500 outline-none focus:border-brand-500 transition-colors">
+                    <input type="text" maxlength="1"
+                        class="otp-input w-full h-14 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl text-center text-2xl font-black text-brand-500 outline-none focus:border-brand-500 transition-colors">
+                    <input type="text" maxlength="1"
+                        class="otp-input w-full h-14 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl text-center text-2xl font-black text-brand-500 outline-none focus:border-brand-500 transition-colors">
+                    <input type="text" maxlength="1"
+                        class="otp-input w-full h-14 bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl text-center text-2xl font-black text-brand-500 outline-none focus:border-brand-500 transition-colors">
+                </div>
+                <button type="button" onclick="verifyOtp()" id="verify-otp-btn"
+                    class="w-full bg-brand-500 hover:bg-brand-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg hover:shadow-brand-500/20 flex justify-center items-center gap-2">
+                    Verify Code <i class="fas fa-check-circle"></i>
+                </button>
+                <button type="button" onclick="clearOtpEntry()"
+                    class="w-full mt-2 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">Use
+                    a different number</button>
+            </div>
+
+            <!-- Password Form (Hidden Initially) -->
+            <form id="pwd-form" method="POST" action="/login" class="hidden space-y-4">
+                <div>
+                    <input type="text" name="username" placeholder="Username"
+                        class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3.5 text-slate-900 dark:text-white focus:border-brand-500 outline-none transition-colors"
+                        required>
+                </div>
+                <div>
+                    <input type="password" name="password" placeholder="Password"
+                        class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3.5 text-slate-900 dark:text-white focus:border-brand-500 outline-none transition-colors"
+                        required>
+                </div>
+                <button type="submit"
+                    class="w-full bg-gradient-to-r from-brand-500 to-orange-600 hover:from-brand-400 hover:to-orange-500 text-white font-bold py-4 rounded-xl transition-all shadow-[0_4px_15px_rgba(245,158,11,0.2)] hover:-translate-y-0.5 mt-4">
+                    Sign In Securely
+                </button>
+            </form>
+
+            <p class="text-center mt-8 text-sm text-slate-500 dark:text-slate-400">New around here? <a href="/setup"
+                    class="text-brand-500 ml-1 font-bold">Start your page</a></p>
+        </div>
+    </main>
+
+    <script>
+        const alertBox = document.getElementById('alert-box');
+
+        function showAlert(msg) {
+            alertBox.innerText = msg;
+            alertBox.classList.remove('hidden');
+        }
+
+        // Handle Tab Switching
+        function switchTab(tabId) {
+            const tabOtp = document.getElementById('tab-otp');
+            const tabPwd = document.getElementById('tab-pwd');
+            const reqSec = document.getElementById('otp-request-section');
+            const verSec = document.getElementById('otp-verify-section');
+            const pwdForm = document.getElementById('pwd-form');
+
+            alertBox.classList.add('hidden'); // clear alerts
+
+            if (tabId === 'otp') {
+                tabOtp.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+                tabOtp.classList.remove('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-800', 'dark:hover:text-slate-200');
+
+                tabPwd.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+                tabPwd.classList.add('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-800', 'dark:hover:text-slate-200');
+
+                pwdForm.classList.add('hidden');
+                // Auto-return to request box if no OTP was sent
+                verSec.classList.add('hidden');
+                reqSec.classList.remove('hidden');
+
+            } else {
+                tabPwd.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+                tabPwd.classList.remove('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-800', 'dark:hover:text-slate-200');
+
+                tabOtp.classList.remove('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-sm');
+                tabOtp.classList.add('text-slate-500', 'dark:text-slate-400', 'hover:text-slate-800', 'dark:hover:text-slate-200');
+
+                verSec.classList.add('hidden');
+                reqSec.classList.add('hidden');
+                pwdForm.classList.remove('hidden');
+            }
+        }
+
+        // Mock Handle Google Login Request
+        async function handleGoogleLogin() {
+            try {
+                const response = await fetch('/google-login', { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    showAlert(data.message);
+                }
+            } catch (err) {
+                showAlert('Google Sign-In mocking failed.');
+            }
+        }
+
+        // Send OTP API
+        async function sendOtp() {
+            alertBox.classList.add('hidden');
+            const contact = document.getElementById('otp-contact').value;
+            const btn = document.getElementById('send-otp-btn');
+
+            if (!contact) { return showAlert("Please enter an Email or Phone Number."); }
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contact: contact })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    // Transition to OTP Code Entry
+                    document.getElementById('otp-request-section').classList.add('hidden');
+                    document.getElementById('otp-verify-section').classList.remove('hidden');
+
+                    if (data.mode === 'demo') {
+                        showAlert("DEMO MODE: Your mock code is " + data.otp);
+                    } else {
+                        showAlert(data.message);
+                    }
+                } else {
+                    showAlert(data.message);
+                }
+            } catch (e) {
+                showAlert("Error reaching server.");
+            }
+
+            btn.innerHTML = 'Send Login Code <i class="fas fa-paper-plane text-xs"></i>';
+            btn.disabled = false;
+        }
+
+        // Verify OTP API
+        async function verifyOtp() {
+            alertBox.classList.add('hidden');
+            const inputs = document.querySelectorAll('.otp-input');
+            let otpStr = '';
+            inputs.forEach(i => otpStr += i.value);
+
+            if (otpStr.length !== 4) return showAlert("Please entire the complete 4-digit code.");
+
+            const btn = document.getElementById('verify-otp-btn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ otp: otpStr })
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    window.location.href = data.redirect;
+                } else {
+                    showAlert(data.message);
+                    inputs.forEach(i => i.value = ''); // clear inputs on fail
+                    inputs[0].focus();
+                }
+            } catch (e) {
+                showAlert("Error verifying code.");
+            }
+
+            btn.innerHTML = 'Verify Code <i class="fas fa-check-circle"></i>';
+            btn.disabled = false;
+        }
+
+        function clearOtpEntry() {
+            document.getElementById('otp-verify-section').classList.add('hidden');
+            document.getElementById('otp-request-section').classList.remove('hidden');
+            alertBox.classList.add('hidden');
+            const inputs = document.querySelectorAll('.otp-input');
+            inputs.forEach(i => i.value = '');
+        }
+
+        // OTP Input Auto-focus Logic
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('keyup', (e) => {
+                if (e.key >= 0 && e.key <= 9) {
+                    input.value = e.key; // ensure single char
+                    if (index < 3) otpInputs[index + 1].focus();
+                } else if (e.key === 'Backspace') {
+                    if (index > 0) otpInputs[index - 1].focus();
+                }
+            });
+            input.addEventListener('click', () => { input.select() });
+        });
+
+        // Theme Toggle Script
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        if (html.classList.contains('dark')) { themeIcon.classList.replace('fa-sun', 'fa-moon'); }
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                themeIcon.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+    </script>
+</body>
+
+</html>

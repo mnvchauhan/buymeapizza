@@ -1,197 +1,234 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark scroll-smooth">
 <head>
-    <title>{{ name }} | Support My Work</title>
+    <title>Support {{ name }} | BuyMeCholeBhature</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], },
+                    colors: {
+                        brand: { 50: '#fffbeb', 100: '#fef3c7', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 900: '#78350f', }
+                    },
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
     <style>
         body { 
-            font-family: 'Inter', sans-serif;
-            background-color: #000; 
-            color: #e4e4e7; 
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        
-        /* Premium CSS Noise/Grain Overlay */
-        .bg-noise {
-            position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #334155; }
         
-        /* Hide Number Input Arrows */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         
-        /* Smooth QR Reveal */
-        #qrContainer { transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); max-height: 0; opacity: 0; overflow: hidden; }
-        #qrContainer.active { max-height: 500px; opacity: 1; margin-top: 1.5rem; }
+        #qrContainer { transition: all 0.4s ease; max-height: 0; opacity: 0; overflow: hidden; }
+        #qrContainer.active { max-height: 600px; opacity: 1; margin-top: 1.5rem; }
 
-        /* Neon Text Glow */
-        .glow-text { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+        /* Sleek minimalistic hover effect */
+        .sleek-card { transition: all 0.2s ease; border: 1px solid transparent; }
+        .sleek-card:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08); 
+            border-color: #f59e0b; /* Brand subtle highlight */
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 md:p-8 overflow-x-hidden relative selection:bg-orange-500/30">
+<body class="bg-slate-50 text-slate-900 dark:bg-[#0B1121] dark:text-slate-50 min-h-screen overflow-x-hidden relative selection:bg-brand-500/30 font-sans antialiased">
     
-    <div class="bg-noise"></div>
+    <!-- MINIMALIST GRID BACKGROUND -->
+    <div class="fixed inset-0 pointer-events-none z-[-1] opacity-50 dark:opacity-20" style="background-image: radial-gradient(#94a3b8 1px, transparent 1px); background-size: 30px 30px;"></div>
 
-    <div class="fixed top-[-20%] left-[-10%] w-[50vw] h-[50vw] bg-orange-600/15 rounded-full blur-[120px] mix-blend-screen animate-[pulse_8s_ease-in-out_infinite]"></div>
-    <div class="fixed bottom-[-20%] right-[-10%] w-[50vw] h-[50vw] bg-blue-600/15 rounded-full blur-[120px] mix-blend-screen animate-[pulse_10s_ease-in-out_infinite_reverse]"></div>
-
-    <div class="relative z-10 bg-[#0a0a0a]/60 backdrop-blur-3xl border-t border-l border-white/10 border-b-0 border-r-0 rounded-[2.5rem] shadow-[0_8px_32px_0_rgba(0,0,0,0.6)] ring-1 ring-white/5 max-w-5xl w-full flex flex-col md:flex-row overflow-hidden transition-all duration-500 hover:shadow-[0_16px_64px_0_rgba(249,115,22,0.1)]">
-        
-        <div class="absolute top-6 left-6 flex gap-2.5 z-20">
-            <div class="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e] shadow-inner"></div>
-            <div class="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123] shadow-inner"></div>
-            <div class="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29] shadow-inner"></div>
-        </div>
-
-        <div class="w-full md:w-1/2 p-10 pt-20 border-b md:border-b-0 md:border-r border-white/5 bg-gradient-to-b from-white/[0.02] to-transparent flex flex-col justify-center relative group">
-            
-            <div class="mb-8 relative w-fit mx-auto md:mx-0">
-                <div class="absolute inset-[-4px] bg-gradient-to-r from-orange-500 via-yellow-500 to-orange-500 rounded-full blur-md opacity-40 group-hover:opacity-80 transition-opacity duration-500 animate-[spin_4s_linear_infinite]"></div>
-                <div class="relative w-32 h-32 rounded-full border border-white/20 shadow-2xl overflow-hidden bg-[#111] p-1">
-                    <div class="w-full h-full rounded-full overflow-hidden bg-zinc-900">
-                        {% if pic == 'default.png' %}
-                            <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ name }}&backgroundColor=transparent" class="w-full h-full object-cover">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='uploads/' + pic) }}" class="w-full h-full object-cover">
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-3 tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-400 glow-text text-center md:text-left">{{ name }}</h1>
-            <div class="text-zinc-400 text-sm leading-relaxed max-h-48 overflow-y-auto pr-3 mt-2 font-light text-center md:text-left">
-                <p>{{ bio }}</p>
-            </div>
-            
-            <div class="flex justify-center md:justify-start flex-wrap gap-4 mt-8">
-                {% if website %}
-                <a href="{{ website }}" target="_blank" title="Website" class="p-3 rounded-full bg-white/5 border border-white/5 hover:bg-emerald-500/20 hover:border-emerald-500/50 hover:-translate-y-1 transition-all duration-300 text-zinc-400 hover:text-emerald-400 shadow-lg hover:shadow-emerald-500/20 group">
-                    <i data-lucide="globe" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                </a>
-                {% endif %}
-
-                {% if github %}
-                <a href="{{ github }}" target="_blank" title="GitHub" class="p-3 rounded-full bg-white/5 border border-white/5 hover:bg-white/10 hover:border-white/20 hover:-translate-y-1 transition-all duration-300 text-zinc-400 hover:text-white shadow-lg group">
-                    <i data-lucide="github" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                </a>
-                {% endif %}
-
-                {% if linkedin %}
-                <a href="{{ linkedin }}" target="_blank" title="LinkedIn" class="p-3 rounded-full bg-white/5 border border-white/5 hover:bg-blue-500/20 hover:border-blue-500/50 hover:-translate-y-1 transition-all duration-300 text-zinc-400 hover:text-blue-400 shadow-lg hover:shadow-blue-500/20 group">
-                    <i data-lucide="linkedin" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                </a>
-                {% endif %}
-
-                {% if instagram %}
-                <a href="{{ instagram }}" target="_blank" title="Instagram" class="p-3 rounded-full bg-white/5 border border-white/5 hover:bg-pink-500/20 hover:border-pink-500/50 hover:-translate-y-1 transition-all duration-300 text-zinc-400 hover:text-pink-400 shadow-lg hover:shadow-pink-500/20 group">
-                    <i data-lucide="instagram" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                </a>
-                {% endif %}
-            </div>
-
-            <button onclick="copyMyLink()" id="copyBtn" class="mt-10 mx-auto md:mx-0 w-fit flex items-center gap-2 bg-white/[0.03] hover:bg-white/10 px-6 py-3 rounded-full border border-white/10 transition-all duration-300 text-xs font-medium text-zinc-300 hover:text-white hover:shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-                <i data-lucide="link" class="w-4 h-4"></i> <span>Copy Profile Link</span>
-            </button>
-        </div>
-
-        <div class="w-full md:w-1/2 p-10 pt-16 flex flex-col justify-center relative">
-            <h2 class="text-sm font-semibold text-zinc-400 tracking-widest uppercase mb-6 text-center md:text-left">Select Support Level</h2>
-            
-            <div class="grid grid-cols-1 gap-3.5 mb-2" id="menuOptions"></div>
-
-            <div class="my-6 flex items-center gap-4">
-                <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-                <span class="text-xs font-medium text-zinc-500 uppercase tracking-widest">OR</span>
-                <div class="h-[1px] w-full bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-            </div>
-
-            <div class="flex gap-3">
-                <div class="relative flex-1 group">
-                    <div class="absolute inset-0 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-2xl blur opacity-0 group-focus-within:opacity-20 transition-opacity duration-500"></div>
-                    <div class="relative flex items-center bg-[#111] border border-white/10 rounded-2xl overflow-hidden focus-within:border-orange-500/50 transition-colors">
-                        <span class="pl-5 text-zinc-500 font-bold">₹</span>
-                        <input type="number" id="customAmount" placeholder="Custom Amount" class="w-full bg-transparent py-4 pl-3 pr-4 text-white placeholder-zinc-600 focus:outline-none font-medium">
-                    </div>
-                </div>
-                <button onclick="generateCustomQR()" class="relative overflow-hidden bg-white text-black font-bold px-6 rounded-2xl transition-transform hover:scale-[1.02] active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)] group">
-                    <span class="relative z-10 flex items-center gap-2">Pay <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i></span>
-                </button>
-            </div>
-
-            <div id="qrContainer" class="flex flex-col items-center justify-center">
-                <div class="relative group mt-4">
-                    <div class="absolute inset-0 bg-gradient-to-b from-orange-500 to-yellow-500 rounded-3xl blur-xl opacity-20"></div>
-                    <div class="relative z-10 bg-white p-5 rounded-[2rem] shadow-2xl border border-white/20">
-                        <div id="qrcode"></div>
-                    </div>
-                </div>
-                <div class="mt-6 inline-flex items-center gap-3 bg-white/5 py-2.5 px-5 rounded-full border border-white/10 backdrop-blur-md">
-                    <span class="relative flex h-2.5 w-2.5">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                    </span>
-                    <p class="text-xs font-medium text-zinc-300 tracking-wide">Scan to pay <span class="text-white font-bold text-sm ml-1" id="displayAmount"></span></p>
-                </div>
-            </div>
-        </div>
+    <!-- MINIMAL NAV / THEME TOGGLE -->
+    <div class="absolute top-6 right-6 lg:right-10 z-50 flex gap-4">
+        {% if username %}
+            <a href="/" class="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+                <i class="fas fa-home text-slate-500 dark:text-slate-400"></i>
+            </a>
+            <a href="/logout" class="h-10 px-5 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-red-50 dark:hover:bg-red-900/20 transition font-bold text-slate-600 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400">
+                Log out
+            </a>
+        {% else %}
+            <a href="/" class="h-10 px-5 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition font-bold text-slate-600 dark:text-slate-300">
+                Home
+            </a>
+        {% endif %}
+        <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition">
+            <i id="theme-icon" class="fas fa-sun text-slate-500 dark:text-slate-400"></i>
+        </button>
     </div>
 
+    <!-- MAIN PROFILE CONTAINER -->
+    <main class="min-h-screen py-24 flex items-center justify-center px-4 md:px-6">
+        <div class="relative z-10 bg-white dark:bg-[#0F172A] border border-slate-200 dark:border-slate-800 shadow-2xl rounded-3xl max-w-5xl w-full flex flex-col md:flex-row overflow-hidden">
+            
+            <!-- Left Side: Clean Profile Info -->
+            <div class="w-full md:w-5/12 p-10 lg:p-14 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800/50 bg-slate-50/50 dark:bg-[#0B1121]/30 flex flex-col items-center md:items-start text-center md:text-left relative">
+                
+                <!-- Simple Clean Avatar -->
+                <div class="mb-6 relative w-28 h-28 lg:w-32 lg:h-32 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden bg-white dark:bg-[#111]">
+                    {% if pic == 'default.png' %}
+                        <img src="https://api.dicebear.com/7.x/notionists/svg?seed={{ name }}&backgroundColor=transparent" class="w-full h-full object-cover">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='uploads/' + pic) }}" class="w-full h-full object-cover">
+                    {% endif %}
+                </div>
+
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[11px] font-bold tracking-wide uppercase mb-6 border border-slate-200 dark:border-slate-700">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Accepting Support
+                </div>
+
+                <h1 class="text-3xl lg:text-4xl font-extrabold mb-1 tracking-tight text-slate-900 dark:text-white">{{ name }}</h1>
+                <p class="text-brand-500 font-semibold mb-5 text-sm lg:text-base">@{{ username }}</p>
+                
+                <div class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-h-48 overflow-y-auto w-full mb-8 font-normal">
+                    <p>{{ bio }}</p>
+                </div>
+                
+                <!-- Minimal Social Links -->
+                <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                    {% if website %}
+                    <a href="{{ website }}" target="_blank" title="Website" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                        <i class="fas fa-globe text-base"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if github %}
+                    <a href="{{ github }}" target="_blank" title="GitHub" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                        <i class="fab fa-github text-base"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if linkedin %}
+                    <a href="{{ linkedin }}" target="_blank" title="LinkedIn" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                        <i class="fab fa-linkedin text-base"></i>
+                    </a>
+                    {% endif %}
+
+                    {% if instagram %}
+                    <a href="{{ instagram }}" target="_blank" title="Instagram" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 transition text-slate-400 hover:text-slate-700 dark:hover:text-slate-200">
+                        <i class="fab fa-instagram text-base"></i>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="mt-10 pt-6 border-t border-slate-200 dark:border-slate-800/50 w-full">
+                    <button onclick="copyMyLink()" id="copyBtn" class="w-full flex justify-between items-center bg-white dark:bg-[#111827] hover:bg-slate-50 dark:hover:bg-slate-800 p-3.5 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm font-semibold text-slate-600 dark:text-slate-300 transition-colors">
+                        <span class="flex items-center gap-2.5"><i class="fas fa-link text-slate-400"></i> Copy Profile Link</span>
+                        <i class="fas fa-chevron-right text-[10px] text-slate-300 dark:text-slate-600"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Side: Clean Professional Checkout -->
+            <div class="w-full md:w-7/12 p-10 lg:p-14 flex flex-col justify-center bg-white dark:bg-[#0F172A]">
+                
+                <div class="mb-8">
+                    <h2 class="text-2xl lg:text-3xl font-bold text-slate-900 dark:text-white tracking-tight mb-2">Show your support</h2>
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Choose an option below to fuel my work.</p>
+                </div>
+                
+                <!-- Dynamic Minimalist Menu injected from app.py DISHES -->
+                <div class="grid grid-cols-1 gap-3.5 mb-2" id="menuOptions">
+                    <!-- Javascript will map dishes here -->
+                </div>
+
+                <div class="my-8 flex items-center gap-4">
+                    <div class="h-px w-full bg-slate-200 dark:bg-slate-800"></div>
+                    <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest whitespace-nowrap">Or custom amount</span>
+                    <div class="h-px w-full bg-slate-200 dark:bg-slate-800"></div>
+                </div>
+
+                <!-- Custom Amount Input: Clean and Flat -->
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1">
+                        <div class="relative flex items-center bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-2xl overflow-hidden focus-within:border-brand-500 dark:focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all shadow-sm">
+                            <span class="pl-4 text-slate-400 font-semibold text-lg">₹</span>
+                            <input type="number" id="customAmount" placeholder="Enter amount" class="w-full bg-transparent py-4 pl-3 pr-4 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none font-semibold">
+                        </div>
+                    </div>
+                    <button onclick="generateCustomQR()" class="sm:w-auto w-full bg-slate-900 dark:bg-brand-500 hover:bg-slate-800 dark:hover:bg-brand-400 text-white font-bold px-8 py-4 sm:py-0 rounded-2xl transition-colors shadow-sm focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 dark:focus:ring-brand-500 flex justify-center items-center gap-2">
+                        <span>Pay Now</span> <i class="fas fa-arrow-right text-[12px]"></i>
+                    </button>
+                </div>
+
+                <!-- Sleek QR Reveal Container -->
+                <div id="qrContainer" class="flex flex-col items-center justify-center">
+                    <div class="relative mt-8">
+                        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 ring-1 ring-slate-100 dark:ring-white/5">
+                            <div id="qrcode"></div>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-brand-500"></span>
+                        <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">Scan anywhere to pay <span class="text-slate-900 dark:text-white font-bold ml-1">₹<span id="displayAmount"></span></span></p>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 font-medium flex items-center gap-1.5"><i class="fas fa-shield-alt text-slate-300 dark:text-slate-600"></i> Zero fees. Direct to Bank.</p>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
     <script>
-        // Initialize Icons
-        lucide.createIcons(); 
+        // Inject server-provided DISHES object into JS
+        const dishesObj = {{ all_dishes | tojson | safe }};
+        const menuKeys = Object.keys(dishesObj).slice(0, 3); // Top 3 items
         
-        // Data injected from Flask Backend
         const upiId = "{{ upi_id }}";
         const creatorName = "{{ name }}";
         let qrCodeObj = null;
-
-        // Preset Menu Items
-        const menu = [
-            { id: 1, name: 'Mini Coffee', price: 49, icon: '☕' },
-            { id: 2, name: 'Pro Dev Meal', price: 99, icon: '⚡' },
-            { id: 3, name: 'God Mode Feast', price: 199, icon: '🚀' }
-        ];
 
         const container = document.getElementById('menuOptions');
         const customInput = document.getElementById('customAmount');
         const qrContainer = document.getElementById('qrContainer');
 
-        // Render Preset Buttons
-        menu.forEach(item => {
+        menuKeys.forEach(key => {
+            const item = dishesObj[key];
             const btn = document.createElement('button');
-            btn.className = 'w-full flex items-center justify-between p-5 rounded-2xl border bg-[#111] border-white/5 hover:border-white/20 transition-all duration-300 text-left group hover:-translate-y-0.5 hover:shadow-lg';
+            
+            // Replaced heavy gradients with sleek flat design
+            btn.className = `sleek-card w-full flex items-center justify-between p-3 pr-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-left`;
+            
             btn.innerHTML = `
                 <div class="flex items-center gap-4">
-                    <div class="text-2xl bg-white/5 w-10 h-10 flex items-center justify-center rounded-xl group-hover:scale-110 transition-transform duration-300">${item.icon}</div>
-                    <span class="text-base font-medium text-zinc-300 group-hover:text-white transition-colors">${item.name}</span>
+                    <div class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-xl border border-slate-100 dark:border-slate-700/50">
+                        ${item.emoji}
+                    </div>
+                    <div>
+                        <span class="block text-base font-bold text-slate-800 dark:text-slate-100 leading-none">${item.name}</span>
+                        <span class="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mt-1 uppercase tracking-wider">Top Choice</span>
+                    </div>
                 </div>
-                <span class="font-bold text-lg text-white group-hover:text-orange-400 transition-colors">₹${item.price}</span>
+                <div class="text-right">
+                    <span class="block font-bold text-lg text-slate-900 dark:text-white">₹${item.price}</span>
+                </div>
             `;
             
             btn.onclick = () => {
-                // Clear custom input if preset is clicked
                 customInput.value = '';
                 resetButtonStyles();
                 
-                // Highlight clicked button
-                btn.classList.remove('bg-[#111]', 'border-white/5');
-                btn.classList.add('bg-orange-500/10', 'border-orange-500/50', 'shadow-[0_0_20px_rgba(249,115,22,0.1)]');
+                // Professional selected state: solid thin border with subtle tint
+                btn.classList.add('border-brand-500', 'bg-brand-50/50', 'dark:border-brand-500', 'dark:bg-brand-900/10');
+                btn.classList.remove('border-slate-200', 'dark:border-slate-800');
                 
                 showQR(item.price);
             };
             container.appendChild(btn);
         });
 
-        // Generate Custom QR
         function generateCustomQR() {
             const amount = parseInt(customInput.value);
             if (!amount || amount <= 0) {
@@ -202,21 +239,19 @@
             showQR(amount);
         }
 
-        // Show QR Code with Smooth Animation
+        // Clean QR Render
         function showQR(amount) {
             qrContainer.classList.add('active');
-            document.getElementById('displayAmount').innerText = `₹${amount}`;
+            document.getElementById('displayAmount').innerText = amount;
             
-            // Format UPI Link
             const upiLink = `upi://pay?pa=${upiId}&pn=${creatorName}&am=${amount}&cu=INR`;
             
-            // Generate or Update QR
             if (qrCodeObj == null) {
                 qrCodeObj = new QRCode(document.getElementById("qrcode"), { 
                     text: upiLink, 
                     width: 170, 
                     height: 170, 
-                    colorDark : "#050505", 
+                    colorDark : "#0f172a", 
                     colorLight : "#ffffff", 
                     correctLevel : QRCode.CorrectLevel.H 
                 });
@@ -225,34 +260,49 @@
                 qrCodeObj.makeCode(upiLink);
             }
             
-            // Auto-scroll on mobile devices
             if(window.innerWidth < 768) {
-                setTimeout(() => qrContainer.scrollIntoView({behavior: 'smooth', block: 'end'}), 100);
+                setTimeout(() => qrContainer.scrollIntoView({behavior: 'smooth', block: 'end'}), 200);
             }
         }
 
-        // Clear Preset Button Highlights
         function resetButtonStyles() {
             Array.from(container.children).forEach(b => {
-                b.classList.remove('bg-orange-500/10', 'border-orange-500/50', 'shadow-[0_0_20px_rgba(249,115,22,0.1)]');
-                b.classList.add('bg-[#111]', 'border-white/5');
+                b.classList.remove('border-brand-500', 'bg-brand-50/50', 'dark:border-brand-500', 'dark:bg-brand-900/10');
+                b.classList.add('border-slate-200', 'dark:border-slate-800');
             });
         }
 
-        // Copy Profile Link to Clipboard
         function copyMyLink() {
             navigator.clipboard.writeText(window.location.href);
             const btn = document.getElementById('copyBtn');
+            const icon = btn.querySelector('i.fas.fa-link');
             const span = btn.querySelector('span');
+            const prevIconClass = icon ? icon.className : '';
             
-            span.innerText = "Copied!";
-            btn.classList.add('bg-green-500/20', 'text-green-400', 'border-green-500/50', 'shadow-[0_0_20px_rgba(34,197,94,0.2)]');
+            span.innerHTML = '<i class="fas fa-check text-emerald-500 mr-2"></i> Copied to clipboard';
             
             setTimeout(() => {
-                span.innerText = "Copy Profile Link";
-                btn.classList.remove('bg-green-500/20', 'text-green-400', 'border-green-500/50', 'shadow-[0_0_20px_rgba(34,197,94,0.2)]');
-            }, 2500);
+                span.innerHTML = '<i class="fas fa-link text-slate-400 mr-2"></i> Copy Profile Link';
+            }, 3000);
         }
+
+        // Theme Toggle Logic
+        const htmlElement = document.documentElement;
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIconBtn = document.getElementById('theme-icon');
+
+        if (htmlElement.classList.contains('dark')) {
+            themeIconBtn.classList.replace('fa-sun', 'fa-moon');
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            if (htmlElement.classList.contains('dark')) {
+                themeIconBtn.classList.replace('fa-sun', 'fa-moon');
+            } else {
+                themeIconBtn.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
     </script>
 </body>
 </html>
