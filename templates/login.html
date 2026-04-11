@@ -296,7 +296,7 @@
             let otpStr = '';
             inputs.forEach(i => otpStr += i.value);
 
-            if (otpStr.length !== 4) return showAlert("Please entire the complete 4-digit code.");
+            if (otpStr.length !== 4) return showAlert("Please enter the complete 4-digit code.");
 
             const btn = document.getElementById('verify-otp-btn');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
@@ -333,19 +333,39 @@
             inputs.forEach(i => i.value = '');
         }
 
-        // OTP Input Auto-focus Logic
+        // OTP Input Auto-focus & Mobile Fix
         const otpInputs = document.querySelectorAll('.otp-input');
         otpInputs.forEach((input, index) => {
-            input.addEventListener('keyup', (e) => {
-                if (e.key >= 0 && e.key <= 9) {
-                    input.value = e.key; // ensure single char
-                    if (index < 3) otpInputs[index + 1].focus();
-                } else if (e.key === 'Backspace') {
-                    if (index > 0) otpInputs[index - 1].focus();
+            input.addEventListener('input', (e) => {
+                input.value = input.value.replace(/[^0-9]/g, ''); // numeric only
+                if (input.value !== '' && index < 3) {
+                    otpInputs[index + 1].focus();
                 }
             });
-            input.addEventListener('click', () => { input.select() });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && input.value === '' && index > 0) {
+                    otpInputs[index - 1].focus();
+                }
+            });
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasted = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 4);
+                for (let i = 0; i < pasted.length; i++) {
+                    if (index + i < 4) {
+                        otpInputs[index + i].value = pasted[i];
+                    }
+                }
+                const focusIndex = Math.min(index + pasted.length, 3);
+                otpInputs[focusIndex].focus();
+            });
+            input.addEventListener('click', () => { input.select(); });
+            input.addEventListener('focus', () => { input.select(); });
         });
+
+        {% if error %}
+        // If server rendered an error (e.g. invalid username/password), show the password tab
+        switchTab('pwd');
+        {% endif %}
 
         // Theme Toggle Script
         const html = document.documentElement;
