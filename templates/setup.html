@@ -58,12 +58,23 @@
                 <span class="text-2xl font-bold tracking-tight">BuyMe<span class="text-brand-500">CholeBhature</span></span>
             </a>
             
-            <div class="flex items-center gap-4">
-                <button id="theme-toggle" class="w-10 h-10 rounded-full flex items-center justify-center bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition">
+            <div class="flex items-center gap-2 md:gap-4">
+                <button id="theme-toggle" class="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
                     <i id="theme-icon" class="fas fa-sun text-slate-700 dark:text-brand-400"></i>
                 </button>
-                <a href="/login" class="hidden md:block font-bold text-slate-900 dark:text-white hover:text-brand-500 transition">Log in</a>
+                <a href="/login" class="hidden md:flex font-bold text-slate-900 dark:text-white hover:text-brand-500 transition">Log in</a>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
+        </div>
+
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white dark:bg-[#0B1121] border-b border-slate-200 dark:border-slate-800 px-6 py-6 space-y-4">
+            <a href="/login" class="block text-lg font-bold hover:text-brand-500">Log in</a>
+            <a href="/" class="block text-lg font-bold hover:text-brand-500">Home</a>
         </div>
     </nav>
 
@@ -81,27 +92,26 @@
             {% endif %}
 
             <form method="POST" action="/setup" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                
+                <input type="hidden" name="google_id" value="{{ prefill.get('google_id', '') }}">
                 <div class="space-y-5">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Username</label>
-                        <input type="text" name="username" placeholder="mnvchauhan" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
+                        <input type="text" name="username" value="{{ prefill.get('email', '').split('@')[0] }}" placeholder="mnvchauhan" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Password</label>
-                        <input type="password" name="password" placeholder="••••••••" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
+                        <input type="password" name="password" placeholder="••••••••" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" {% if not prefill.get('google_id') %}required{% endif %}>
+                        {% if prefill.get('google_id') %}
+                        <p class="text-[10px] text-slate-400 mt-1">Optional when using Google Login</p>
+                        {% endif %}
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Display Name</label>
-                        <input type="text" name="name" placeholder="Manav Chauhan" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
+                        <input type="text" name="name" value="{{ prefill.get('name', '') }}" placeholder="Manav Chauhan" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none" required>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Email Address</label>
-                        <input type="email" name="email" placeholder="mnv@example.com" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">Phone Number</label>
-                        <input type="tel" name="phone" placeholder="+91 9876543210" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none">
+                        <input type="email" name="email" value="{{ prefill.get('email', '') }}" placeholder="mnv@example.com" class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3 text-slate-900 dark:text-white focus:border-brand-500 outline-none">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 dark:text-zinc-400 uppercase tracking-wider mb-2">UPI ID</label>
@@ -163,6 +173,20 @@
                 themeIcon.classList.replace('fa-sun', 'fa-moon');
             } else {
                 themeIcon.classList.replace('fa-moon', 'fa-sun');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = mobileMenuBtn.querySelector('i');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            if (mobileMenu.classList.contains('hidden')) {
+                menuIcon.classList.replace('fa-times', 'fa-bars');
+            } else {
+                menuIcon.classList.replace('fa-bars', 'fa-times');
             }
         });
     </script>

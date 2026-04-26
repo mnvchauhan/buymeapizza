@@ -6,15 +6,37 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from werkzeug.utils import secure_filename
+from authlib.integrations.flask_client import OAuth
+from twilio.rest import Client
+import requests
+from functools import wraps
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key_for_demo'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 # --- EMAIL CONFIGURATION ---
-SENDER_EMAIL = os.environ.get('MAIL_USER', 'manavchauhan0442@gmail.com')
-APP_PASSWORD = os.environ.get('MAIL_PASS', 'keenxlmdnoobnaat')
+SENDER_EMAIL = os.environ.get('MAIL_USER', 'buymeacholebhature@gmail.com')
+APP_PASSWORD = os.environ.get('MAIL_PASS', 'onapjlcxdmencbuh')
+
+# --- GOOGLE OAUTH CONFIGURATION ---
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', 'YOUR_GOOGLE_CLIENT_SECRET')
+
+# --- TWILIO CONFIGURATION ---
+TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.environ.get('TWILIO_AUTH_TOKEN', '')
+TWILIO_PHONE_NUMBER = os.environ.get('TWILIO_PHONE_NUMBER', '')
 # ---------------------------
+
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id=GOOGLE_CLIENT_ID,
+    client_secret=GOOGLE_CLIENT_SECRET,
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={'scope': 'openid email profile'}
+)
 
 # Ensure upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -82,6 +104,14 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
 @app.route('/')
 def home():
     dish = DISHES["chole-bhature"]
@@ -108,30 +138,64 @@ def login():
                 
     return render_template('login.html')
 
-# Mock Google Login Endpoint
-@app.route('/google-login', methods=['POST'])
+# Google Login Endpoint
+@app.route('/google-login', methods=['POST', 'GET'])
 def google_login():
-    # In a real app we'd redirect to Google OAuth callback. 
-    # For mock, simply take first available user in DB to showcase flow
-    conn = get_db_connection()
-    user = conn.execute('SELECT * FROM creators').fetchone()
-    conn.close()
-    if user:
-        session['username'] = user['username']
-        return jsonify({"success": True, "redirect": url_for('profile', username=user['username'])})
-    return jsonify({"success": False, "message": "No users in database to mock Google Login with."})
+    if GOOGLE_CLIENT_ID == 'YOUR_GOOGLE_CLIENT_ID':
+        # Fallback for demo if no keys provided
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM creators').fetchone()
+        conn.close()
+        if user:
+            session['username'] = user['username']
+            return jsonify({"success": True, "redirect": url_for('profile', username=user['username'])})
+        return jsonify({"success": False, "message": "Google Client ID not configured. Add it to app.py to enable real login."})
+        
+    redirect_uri = url_for('google_auth', _external=True)
+    return google.authorize_redirect(redirect_uri)
+
+@app.route('/google-auth')
+def google_auth():
+    token = google.authorize_access_token()
+    user_info = token.get('userinfo')
+    if user_info:
+        email = user_info['email']
+        google_id = user_info['sub']
+        name = user_info['name']
+        
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM creators WHERE google_id = ? OR email = ?', (google_id, email)).fetchone()
+        
+        if user:
+            session['username'] = user['username']
+            # Update google_id if not set
+            if not user['google_id']:
+                conn.execute('UPDATE creators SET google_id = ? WHERE username = ?', (google_id, user['username']))
+                conn.commit()
+            conn.close()
+            return redirect(url_for('profile', username=user['username']))
+        else:
+            # New user - redirect to setup with pre-filled info
+            conn.close()
+            session['pending_google_info'] = {
+                'email': email,
+                'google_id': google_id,
+                'name': name
+            }
+            return redirect(url_for('setup'))
+    return redirect(url_for('login'))
 
 # Send OTP Endpoint (Mock / Real Email)
 def send_real_email(receiver, otp, username):
-    msg = MIMEMultipart()
-    msg['From'] = f"BuyMeCholeBhature <{SENDER_EMAIL}>"
-    msg['To'] = receiver
-    msg['Subject'] = f"{otp} is your BuyMeCholeBhature secure code"
-    
-    body = f"Hey {username},\n\nYour 4-digit secure code to log in is: {otp}\n\nDon't share this with anyone."
-    msg.attach(MIMEText(body, 'plain'))
-    
+    print(f"[DEBUG] Sending Designed OTP email to {receiver}...")
     try:
+        html_content = render_template('otp_email.html', username=username, otp=otp)
+        
+        msg = MIMEText(html_content, 'html', 'utf-8')
+        msg['From'] = f"BuyMeCholeBhature <{SENDER_EMAIL}>"
+        msg['To'] = receiver
+        msg['Subject'] = f"{otp} is your BuyMeCholeBhature secure code"
+        
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.starttls()
         server.login(SENDER_EMAIL, APP_PASSWORD)
@@ -139,14 +203,47 @@ def send_real_email(receiver, otp, username):
         server.quit()
         return True
     except Exception as e:
-        print(f"SMTP Error: {e}")
+        print(f"[ERROR] Designed OTP email failed: {e}")
         return False
+    
+
+# --- WELCOME EMAIL FUNCTION ---
+def send_welcome_email(receiver, username):
+    print(f"[DEBUG] Attempting to send welcome email to {receiver}...")
+    msg = MIMEMultipart('alternative')
+    msg['From'] = f"Buy Me a Chole Bhature <{SENDER_EMAIL}>"
+    msg['To'] = receiver
+    msg['Subject'] = f"Welcome to Buy Me a Chole Bhature, {username}! 🎉"
+    
+    # Plaintext fallback
+    text_content = f"Hi {username},\n\nWelcome to BuyMeCholeBhature! Your page is live at: https://bymeacholebhature.shop/{username}"
+    
+    try:
+        html_content = render_template('welcome_email.html', username=username)
+        
+        part1 = MIMEText(text_content, 'plain')
+        part2 = MIMEText(html_content, 'html')
+        
+        msg.attach(part1)
+        msg.attach(part2)
+        
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(SENDER_EMAIL, APP_PASSWORD)
+        server.sendmail(SENDER_EMAIL, receiver, msg.as_string())
+        server.quit()
+        print(f"[DEBUG] Welcome email successfully sent to {receiver}")
+        return True
+    except Exception as e:
+        print(f"[ERROR] SMTP Error in welcome email: {e}")
+        return False
+# ------------------------------
 
 @app.route('/send-otp', methods=['POST'])
 def send_otp():
     contact = request.json.get('contact') # can be email or phone
     if not contact:
-        return jsonify({"success": False, "message": "Please enter phone or email."})
+        return jsonify({"success": False, "message": "Please enter your registered email."})
         
     conn = get_db_connection()
     user = conn.execute('SELECT * FROM creators WHERE email = ? OR phone = ? OR username = ?', (contact, contact, contact)).fetchone()
@@ -156,43 +253,63 @@ def send_otp():
         mock_otp = str(random.randint(1000, 9999))
         session['pending_otp'] = mock_otp
         session['pending_otp_user'] = user['username']
+        session.modified = True
         
         # Determine if it's an email format
         is_email = '@' in contact
         
         if is_email:
-            # If default vars are still set, fallback to Mock behavior and warn terminal
+            # If default vars are still set, fallback to Mock behavior
             if '@gmail.com' in SENDER_EMAIL and SENDER_EMAIL == 'your-email@gmail.com':
-                print(f"\n[WARNING] Real SMTP not configured! Showing UI mock. OTP for {contact} is {mock_otp}\n")
                 return jsonify({"success": True, "message": "OTP sent successfully!", "otp": mock_otp, "mode": "demo"})
             
             # Send Real Email
             success = send_real_email(contact, mock_otp, user['username'])
             if success:
-                print(f"[SMTP SERVER] Successfully dispatched {mock_otp} to {contact}")
                 return jsonify({"success": True, "message": "Secure code dispatched to your inbox!", "mode": "real"})
             else:
-                return jsonify({"success": False, "message": "Server could not send email. Verify your console keys."})
+                return jsonify({"success": False, "message": "Email service failed. Check credentials."})
         else:
-            # Phone Auth logic requires SMS, dropping to Terminal Mock
-            print(f"\n[MOCK OTP SMS] Sending OTP {mock_otp} to {contact}\n")
-            return jsonify({"success": True, "message": "Mock SMS sent!", "otp": mock_otp, "mode": "demo"})
+            # Real SMS via Twilio
+            if TWILIO_ACCOUNT_SID and TWILIO_AUTH_TOKEN:
+                try:
+                    client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+                    message = client.messages.create(
+                        body=f"Your BuyMeCholeBhature login code is: {mock_otp}",
+                        from_=TWILIO_PHONE_NUMBER,
+                        to=contact
+                    )
+                    return jsonify({"success": True, "message": "Login code sent via SMS!", "mode": "real"})
+                except Exception as e:
+                    print(f"Twilio Error: {e}")
+                    return jsonify({"success": False, "message": "SMS delivery failed. Check your Twilio settings."})
+            else:
+                # Fallback to Mock
+                print(f"\n[MOCK OTP SMS] Sending OTP {mock_otp} to {contact}\n")
+                return jsonify({"success": True, "message": "Demo mode: SMS service not configured.", "otp": mock_otp, "mode": "demo"})
     else:
-        return jsonify({"success": False, "message": "Account not found with this contact/username."})
+        return jsonify({"success": False, "message": "Authentication failed. Email not recognized."})
 
 # Verify OTP Endpoint
 @app.route('/verify-otp', methods=['POST'])
 def verify_otp():
-    user_otp = request.json.get('otp')
-    if 'pending_otp' in session and str(session['pending_otp']) == str(user_otp):
+    user_otp = request.json.get('otp', '').strip()
+    pending_otp = session.get('pending_otp')
+    
+    print(f"--- OTP VERIFICATION ---")
+    print(f"User entered: '{user_otp}'")
+    print(f"Session OTP: '{pending_otp}'")
+    
+    if pending_otp and str(pending_otp) == str(user_otp):
         username = session['pending_otp_user']
         session['username'] = username
         # cleanup
         session.pop('pending_otp', None)
         session.pop('pending_otp_user', None)
+        session.modified = True
         return jsonify({"success": True, "redirect": url_for('profile', username=username)})
     else:
-        return jsonify({"success": False, "message": "Invalid or expired OTP."})
+        return jsonify({"success": False, "message": "Invalid or expired OTP. Please try again."})
 
 @app.route('/logout')
 def logout():
@@ -201,6 +318,10 @@ def logout():
 
 @app.route('/setup', methods=['GET', 'POST'])
 def setup():
+    google_info = session.get('pending_google_info')
+    if not google_info:
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -213,6 +334,7 @@ def setup():
         github = request.form.get('github', '')
         linkedin = request.form.get('linkedin', '')
         instagram = request.form.get('instagram', '')
+        google_id = request.form.get('google_id', '')
         
         pic = request.files.get('profile_pic')
         pic_filename = 'default.png'
@@ -222,18 +344,56 @@ def setup():
             
         conn = get_db_connection()
         try:
-            conn.execute('INSERT INTO creators (username, password, name, email, phone, upi_id, bio, pic, website, github, linkedin, instagram) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                         (username, password, name, email, phone, upi_id, bio, pic_filename, website, github, linkedin, instagram))
+            conn.execute('INSERT INTO creators (username, password, name, email, phone, upi_id, bio, pic, website, github, linkedin, instagram, google_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                         (username, password, name, email, phone, upi_id, bio, pic_filename, website, github, linkedin, instagram, google_id))
             conn.commit()
+            
+            # ---> WELCOME EMAIL YAHAN TRIGGER HOGA <---
+            if email:
+                send_welcome_email(email, username)
+            # ------------------------------------------
+            
+            session.pop('pending_google_info', None)
             session['username'] = username
             return redirect(url_for('profile', username=username))
         except sqlite3.IntegrityError:
             conn.close()
-            return render_template('setup.html', error="Username already exists")
+            return render_template('setup.html', error="Username already exists", prefill=google_info)
         
         conn.close()
         
-    return render_template('setup.html')
+    return render_template('setup.html', prefill=google_info)
+
+@app.route('/edit-profile', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    username = session['username']
+    conn = get_db_connection()
+    creator = conn.execute('SELECT * FROM creators WHERE username = ?', (username,)).fetchone()
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        upi_id = request.form.get('upi_id')
+        bio = request.form.get('bio')
+        website = request.form.get('website', '')
+        github = request.form.get('github', '')
+        linkedin = request.form.get('linkedin', '')
+        instagram = request.form.get('instagram', '')
+        
+        pic = request.files.get('profile_pic')
+        pic_filename = creator['pic']
+        if pic and pic.filename != '':
+            pic_filename = secure_filename(pic.filename)
+            pic.save(os.path.join(app.config['UPLOAD_FOLDER'], pic_filename))
+            
+        conn.execute('UPDATE creators SET name=?, upi_id=?, bio=?, pic=?, website=?, github=?, linkedin=?, instagram=? WHERE username=?',
+                     (name, upi_id, bio, pic_filename, website, github, linkedin, instagram, username))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('profile', username=username))
+        
+    conn.close()
+    return render_template('edit_profile.html', creator=creator)
 
 @app.route('/<username>')
 def profile(username):
@@ -246,7 +406,8 @@ def profile(username):
     
     if creator:
         return render_template('profile.html', 
-                               username=creator['username'],
+                               creator_username=creator['username'],
+                               session_user=session.get('username'),
                                name=creator['name'], 
                                bio=creator['bio'], 
                                upi_id=creator['upi_id'], 

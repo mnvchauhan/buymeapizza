@@ -45,6 +45,13 @@
             background: rgba(15, 23, 42, 0.6);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
+
+        @keyframes status-pop {
+            0% { transform: scale(0.95); opacity: 0; }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .status-animate { animation: status-pop 0.3s ease-out forwards; }
     </style>
 </head>
 
@@ -94,11 +101,10 @@
                 <p class="text-slate-500 dark:text-slate-400 text-sm">Sign in to manage your creator dashboard</p>
             </div>
 
-            <div id="alert-box"
-                class="hidden bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-xl mb-6 text-sm font-bold">
-            </div>
+            <div id="status-box" class="hidden px-4 py-3 rounded-xl mb-6 text-sm font-bold status-animate"></div>
+            
             {% if error %}
-            <div class="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-xl mb-6 text-sm font-bold">
+            <div class="bg-red-500/10 border border-red-500 text-red-500 px-4 py-3 rounded-xl mb-6 text-sm font-bold status-animate">
                 {{ error }}
             </div>
             {% endif %}
@@ -137,7 +143,7 @@
             <!-- OTP Request Section -->
             <div id="otp-request-section" class="space-y-4">
                 <div>
-                    <input type="text" id="otp-contact" placeholder="Email or Phone Number"
+                    <input type="email" id="otp-contact" placeholder="Email Address"
                         class="w-full bg-slate-50 dark:bg-[#111] border border-slate-200 dark:border-white/5 rounded-xl p-3.5 text-slate-900 dark:text-white focus:border-brand-500 outline-none transition-colors">
                 </div>
                 <button type="button" onclick="sendOtp()" id="send-otp-btn"
@@ -166,7 +172,7 @@
                 </button>
                 <button type="button" onclick="clearOtpEntry()"
                     class="w-full mt-2 text-sm font-semibold text-slate-500 hover:text-slate-800 dark:hover:text-white transition-colors">Use
-                    a different number</button>
+                    a different email</button>
             </div>
 
             <!-- Password Form (Hidden Initially) -->
@@ -193,12 +199,27 @@
     </main>
 
     <script>
-        const alertBox = document.getElementById('alert-box');
+        const statusBox = document.getElementById('status-box');
 
-        function showAlert(msg) {
-            alertBox.innerText = msg;
-            alertBox.classList.remove('hidden');
+        function showStatus(msg, type = 'error') {
+            statusBox.innerText = msg;
+            statusBox.classList.remove('hidden', 'bg-red-500/10', 'border-red-500', 'text-red-500', 'bg-emerald-500/10', 'border-emerald-500', 'text-emerald-500');
+            
+            if (type === 'error') {
+                statusBox.classList.add('bg-red-500/10', 'border-red-500', 'text-red-500');
+            } else if (type === 'success') {
+                statusBox.classList.add('bg-emerald-500/10', 'border-emerald-500', 'text-emerald-500');
+            } else if (type === 'loading') {
+                statusBox.classList.add('bg-amber-500/10', 'border-amber-500', 'text-amber-500', 'animate-pulse');
+            }
+            
+            statusBox.classList.remove('status-animate');
+            void statusBox.offsetWidth; // trigger reflow
+            statusBox.classList.add('status-animate', 'hidden');
+            statusBox.classList.remove('hidden');
         }
+
+        function showAlert(msg) { showStatus(msg, 'error'); }
 
         // Handle Tab Switching
         function switchTab(tabId) {
@@ -208,7 +229,7 @@
             const verSec = document.getElementById('otp-verify-section');
             const pwdForm = document.getElementById('pwd-form');
 
-            alertBox.classList.add('hidden'); // clear alerts
+            statusBox.classList.add('hidden'); // clear alerts
 
             if (tabId === 'otp') {
                 tabOtp.classList.add('bg-white', 'dark:bg-slate-900', 'text-slate-900', 'dark:text-white', 'shadow-sm');
@@ -235,31 +256,25 @@
             }
         }
 
-        // Mock Handle Google Login Request
+        // Handle Google Login Request
         async function handleGoogleLogin() {
-            try {
-                const response = await fetch('/google-login', { method: 'POST' });
-                const data = await response.json();
-                if (data.success) {
-                    window.location.href = data.redirect;
-                } else {
-                    showAlert(data.message);
-                }
-            } catch (err) {
-                showAlert('Google Sign-In mocking failed.');
-            }
+            // For OAuth flow, we redirect the main window to the Flask route
+            window.location.href = '/google-login';
         }
 
         // Send OTP API
         async function sendOtp() {
-            alertBox.classList.add('hidden');
+            statusBox.classList.add('hidden');
             const contact = document.getElementById('otp-contact').value;
             const btn = document.getElementById('send-otp-btn');
 
-            if (!contact) { return showAlert("Please enter an Email or Phone Number."); }
+            if (!contact) { return showStatus("Please enter your Email Address.", 'error'); }
+            if (!contact.includes('@')) { return showStatus("Please enter a valid Email Address.", 'error'); }
 
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Dispatching...';
+            btn.classList.add('bg-red-600', 'animate-pulse');
             btn.disabled = true;
+            showStatus("Initiating secure transfer...", 'loading');
 
             try {
                 const response = await fetch('/send-otp', {
@@ -269,29 +284,26 @@
                 });
                 const data = await response.json();
                 if (data.success) {
-                    // Transition to OTP Code Entry
-                    document.getElementById('otp-request-section').classList.add('hidden');
-                    document.getElementById('otp-verify-section').classList.remove('hidden');
-
-                    if (data.mode === 'demo') {
-                        showAlert("DEMO MODE: Your mock code is " + data.otp);
-                    } else {
-                        showAlert(data.message);
-                    }
+                    showStatus(data.message, 'success');
+                    setTimeout(() => {
+                        document.getElementById('otp-request-section').classList.add('hidden');
+                        document.getElementById('otp-verify-section').classList.remove('hidden');
+                    }, 800);
                 } else {
-                    showAlert(data.message);
+                    showStatus(data.message, 'error');
                 }
             } catch (e) {
-                showAlert("Error reaching server.");
+                showStatus("Connection error. Try again.", 'error');
             }
 
             btn.innerHTML = 'Send Login Code <i class="fas fa-paper-plane text-xs"></i>';
+            btn.classList.remove('bg-red-600', 'animate-pulse');
             btn.disabled = false;
         }
 
         // Verify OTP API
         async function verifyOtp() {
-            alertBox.classList.add('hidden');
+            statusBox.classList.add('hidden');
             const inputs = document.querySelectorAll('.otp-input');
             let otpStr = '';
             inputs.forEach(i => otpStr += i.value);
@@ -328,7 +340,7 @@
         function clearOtpEntry() {
             document.getElementById('otp-verify-section').classList.add('hidden');
             document.getElementById('otp-request-section').classList.remove('hidden');
-            alertBox.classList.add('hidden');
+            statusBox.classList.add('hidden');
             const inputs = document.querySelectorAll('.otp-input');
             inputs.forEach(i => i.value = '');
         }
