@@ -10,18 +10,23 @@ from authlib.integrations.flask_client import OAuth
 from twilio.rest import Client
 import requests
 from functools import wraps
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = 'super_secret_key_for_demo'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1' # Allow HTTP for local testing
 
 # --- EMAIL CONFIGURATION ---
-SENDER_EMAIL = os.environ.get('MAIL_USER', 'buymeacholebhature@gmail.com')
-APP_PASSWORD = os.environ.get('MAIL_PASS', 'onapjlcxdmencbuh')
+SENDER_EMAIL = os.getenv('MAIL_USER')
+APP_PASSWORD = os.getenv('MAIL_PASS')
 
 # --- GOOGLE OAUTH CONFIGURATION ---
-GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', 'YOUR_GOOGLE_CLIENT_SECRET')
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 
 # --- TWILIO CONFIGURATION ---
 TWILIO_ACCOUNT_SID = os.environ.get('TWILIO_ACCOUNT_SID', '')
@@ -138,18 +143,10 @@ def login():
                 
     return render_template('login.html')
 
-# Google Login Endpoint
 @app.route('/google-login', methods=['POST', 'GET'])
 def google_login():
-    if GOOGLE_CLIENT_ID == 'YOUR_GOOGLE_CLIENT_ID':
-        # Fallback for demo if no keys provided
-        conn = get_db_connection()
-        user = conn.execute('SELECT * FROM creators').fetchone()
-        conn.close()
-        if user:
-            session['username'] = user['username']
-            return jsonify({"success": True, "redirect": url_for('profile', username=user['username'])})
-        return jsonify({"success": False, "message": "Google Client ID not configured. Add it to app.py to enable real login."})
+    if not GOOGLE_CLIENT_ID or 'PASTE_YOUR' in GOOGLE_CLIENT_ID:
+        return "<h2 style='color:red;font-family:sans-serif;text-align:center;margin-top:50px;'>Google Keys Not Configured!</h2><p style='text-align:center;'>Bhai, `.env` file check karo, wahan <b>GOOGLE_CLIENT_ID</b> missing hai.</p>"
         
     redirect_uri = url_for('google_auth', _external=True)
     return google.authorize_redirect(redirect_uri)
